@@ -41,8 +41,8 @@ const bot = new PSClient();
 
 console.log('');
 console.log('  ╔══════════════════════════════════════╗');
-console.log('  ║       Showdown-TurBOOT  v1.0.0       ║');
-console.log('  ║   A Pokémon Showdown Battle/ChatBot   ║');
+console.log('  ║       Showdown-TurBOOT  v1.0.0              ║');
+console.log('  ║   A Pokémon Showdown Battle/ChatBot         ║');
 console.log('  ╚══════════════════════════════════════╝');
 console.log('');
 
