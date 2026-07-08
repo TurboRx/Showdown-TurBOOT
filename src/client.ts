@@ -9,8 +9,6 @@ import {
 	RECONNECT_DELAY_MS,
 } from './config.js';
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
-
 function log(...args: unknown[]): void {
 	const timestamp = new Date().toISOString();
 	console.log(`[${timestamp}]`, ...args);
@@ -18,15 +16,13 @@ function log(...args: unknown[]): void {
 
 function warn(...args: unknown[]): void {
 	const timestamp = new Date().toISOString();
-	console.warn(`[${timestamp}] ⚠`, ...args);
+	console.warn(`[${timestamp}]`, ...args);
 }
 
 function error(...args: unknown[]): void {
 	const timestamp = new Date().toISOString();
-	console.error(`[${timestamp}] ✖`, ...args);
+	console.error(`[${timestamp}]`, ...args);
 }
-
-// ─── PS Client ──────────────────────────────────────────────────────────────
 
 export class PSClient {
 	private ws: WebSocket | null = null;
@@ -35,15 +31,14 @@ export class PSClient {
 	private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 	private intentionalClose = false;
 
-	/** Start the bot — connects and auto-reconnects forever. */
 	connect(): void {
 		if (this.ws) {
-			warn('Already connected or connecting — ignoring duplicate connect()');
+			warn('Already connected or connecting.');
 			return;
 		}
 
 		this.intentionalClose = false;
-		log(`Connecting to ${SERVER_URL}…`);
+		log(`Connecting to ${SERVER_URL}...`);
 
 		this.ws = new WebSocket(SERVER_URL);
 
@@ -76,13 +71,12 @@ export class PSClient {
 			this.scheduleReconnect();
 		});
 
+		// The 'close' event always fires after 'error', so reconnect is handled there.
 		this.ws.on('error', (err: Error) => {
 			error('WebSocket error:', err.message);
-			// The 'close' event fires after 'error', so reconnect is handled there.
 		});
 	}
 
-	/** Gracefully disconnect without auto-reconnect. */
 	disconnect(): void {
 		this.intentionalClose = true;
 		if (this.reconnectTimer) {
@@ -98,7 +92,6 @@ export class PSClient {
 		log('Disconnected.');
 	}
 
-	/** Send a raw message to the server. */
 	send(message: string): void {
 		if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
 			warn('Cannot send — not connected.');
@@ -107,18 +100,15 @@ export class PSClient {
 		this.ws.send(message);
 	}
 
-	/** Send a message to a specific room (or globally if room is empty). */
 	sendToRoom(room: string, message: string): void {
 		this.send(`${room}|${message}`);
 	}
-
-	// ─── Internal ─────────────────────────────────────────────────────────
 
 	private scheduleReconnect(): void {
 		if (this.reconnectTimer) return;
 
 		const delaySec = RECONNECT_DELAY_MS / 1000;
-		log(`Reconnecting in ${delaySec}s…`);
+		log(`Reconnecting in ${delaySec}s...`);
 
 		this.reconnectTimer = setTimeout(() => {
 			this.reconnectTimer = null;
@@ -126,11 +116,7 @@ export class PSClient {
 		}, RECONNECT_DELAY_MS);
 	}
 
-	/**
-	 * Handle a raw WebSocket frame from the server.
-	 * A frame can contain multiple newline-separated messages,
-	 * optionally prefixed with `>ROOMID\n`.
-	 */
+	// PS frames can contain multiple newline-separated messages, optionally prefixed with >ROOMID.
 	private handleRawMessage(raw: string): void {
 		const lines = raw.split('\n');
 		let room = '';
@@ -148,14 +134,11 @@ export class PSClient {
 		}
 	}
 
-	/**
-	 * Handle a single parsed PS protocol message.
-	 */
 	private handleMessage(room: string, type: string, params: string[]): void {
 		switch (type) {
 			case 'challstr': {
 				const challstr = params.join('|');
-				log('Received challstr, authenticating…');
+				log('Received challstr, authenticating...');
 				void this.login(challstr);
 				break;
 			}
@@ -169,7 +152,7 @@ export class PSClient {
 					warn(`Logged in as guest (${username}).`);
 				} else {
 					this.loggedIn = true;
-					log(`✔ Successfully logged in as ${username}`);
+					log(`Successfully logged in as ${username}`);
 					this.onLogin();
 				}
 				break;
@@ -210,36 +193,20 @@ export class PSClient {
 
 			case 'j':
 			case 'join':
-			case 'J': {
-				// User joined a room — ignored for now.
-				break;
-			}
-
+			case 'J':
 			case 'l':
 			case 'leave':
-			case 'L': {
-				// User left a room — ignored for now.
-				break;
-			}
-
+			case 'L':
 			case 'n':
 			case 'name':
-			case 'N': {
-				// User renamed — ignored for now.
+			case 'N':
 				break;
-			}
 
-			default: {
-				// Unhandled message types are silently ignored.
+			default:
 				break;
-			}
 		}
 	}
 
-	/**
-	 * Authenticate with the PS login server and send the
-	 * resulting assertion to the game server.
-	 */
 	private async login(challstr: string): Promise<void> {
 		if (!USERNAME) {
 			warn('No PS_USERNAME set — staying as guest.');
@@ -252,7 +219,7 @@ export class PSClient {
 			body.append('pass', PASSWORD);
 			body.append('challstr', challstr);
 
-			// The login server returns `]` followed by JSON.
+			// The login server returns a `]` prefix before the JSON payload.
 			const response = await fetch(LOGIN_URL, {
 				method: 'POST',
 				body,
@@ -271,30 +238,25 @@ export class PSClient {
 				return;
 			}
 
-			// If the assertion starts with ";;" it means the login failed with an error message.
+			// Assertions starting with ";;" indicate a server-side login error.
 			if (json.assertion.startsWith(';;')) {
 				error('Login assertion error:', json.assertion.slice(2));
 				return;
 			}
 
-			log('Login assertion received, sending to server…');
+			log('Login assertion received, sending to server...');
 			this.send(`|/trn ${USERNAME},0,${json.assertion}`);
 		} catch (err) {
 			error('Login request failed:', err);
 		}
 	}
 
-	/**
-	 * Called after a successful login (`|updateuser|` with logged-in state).
-	 */
 	private onLogin(): void {
-		// Set avatar if configured.
 		if (AVATAR) {
 			this.send(`|/avatar ${AVATAR}`);
 			log(`Setting avatar to ${AVATAR}`);
 		}
 
-		// Auto-join configured rooms.
 		for (const room of ROOMS) {
 			log(`Joining room: ${room}`);
 			this.send(`|/join ${room}`);

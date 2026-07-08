@@ -1,14 +1,7 @@
-/**
- * Showdown-TurBOOT — A Pokémon Showdown Battle/ChatBot
- *
- * Entry point: loads environment, creates the PS client, and connects.
- */
-
-// Load .env file if present (using Node's built-in --env-file won't work
-// with tsx, so we load it manually).
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
+// Node's built-in --env-file flag doesn't work with tsx, so we load .env manually.
 function loadEnv(): void {
 	const envPath = resolve(import.meta.dirname ?? '.', '..', '.env');
 	if (!existsSync(envPath)) return;
@@ -24,7 +17,6 @@ function loadEnv(): void {
 		const key = trimmed.slice(0, eqIndex).trim();
 		const value = trimmed.slice(eqIndex + 1).trim();
 
-		// Don't override existing env vars.
 		if (!(key in process.env)) {
 			process.env[key] = value;
 		}
@@ -33,24 +25,19 @@ function loadEnv(): void {
 
 loadEnv();
 
-// ─── Start the bot ──────────────────────────────────────────────────────────
-
 import { PSClient } from './client.js';
 
 const bot = new PSClient();
 
 console.log('');
-console.log('  ╔══════════════════════════════════════╗');
-console.log('  ║       Showdown-TurBOOT  v1.0.0              ║');
-console.log('  ║   A Pokémon Showdown Battle/ChatBot         ║');
-console.log('  ╚══════════════════════════════════════╝');
+console.log('  Showdown-TurBOOT v1.0.0');
+console.log('  A Pokemon Showdown Battle/ChatBot');
 console.log('');
 
 bot.connect();
 
-// Graceful shutdown.
 function shutdown(signal: string): void {
-	console.log(`\nReceived ${signal}. Shutting down…`);
+	console.log(`\nReceived ${signal}. Shutting down...`);
 	bot.disconnect();
 	process.exit(0);
 }
