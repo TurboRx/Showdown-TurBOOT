@@ -1,2 +1,2 @@
 # Showdown-TurBOOT
-A Pokémon Showdown Bot Battle/ChatBot
+A Pokémon Showdown Battle/ChatBot
