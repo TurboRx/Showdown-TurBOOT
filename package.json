@@ -1,4 +1,13 @@
 {
+  "name": "showdown-turboot",
+  "version": "1.0.0",
+  "description": "A Pokémon Showdown Battle/ChatBot",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
   "devDependencies": {
     "@types/node": "^26.1.1",
     "@types/ws": "^8.18.1",
