@@ -1,6 +1,6 @@
 # Showdown-TurBOOT
 
-A lightweight bot for Pokemon Showdown that connects over WebSocket, logs into your account, auto-joins rooms, and listens to chat. Built with TypeScript and designed to be easy to extend with your own commands and features.
+A bot for Pokemon Showdown that connects over WebSocket, logs into your account, auto-joins rooms, and listens to chat. Built with TypeScript and designed to be easy to extend with your own commands and features.
 
 ## What it does
 
@@ -20,7 +20,7 @@ A lightweight bot for Pokemon Showdown that connects over WebSocket, logs into y
 
 1. Clone the repository and install dependencies:
 
-```
+```bash
 git clone https://github.com/TurboRx/Showdown-TurBOOT.git
 cd Showdown-TurBOOT
 npm install
@@ -28,13 +28,13 @@ npm install
 
 2. Copy the example environment file and fill in your details:
 
-```
+```bash
 cp .env.example .env
 ```
 
 3. Open `.env` in any text editor and set your bot's username and password:
 
-```
+```env
 PS_USERNAME=YourBotName
 PS_PASSWORD=YourBotPassword
 PS_ROOMS=botdevelopment
@@ -44,24 +44,11 @@ If you leave the username blank, the bot will connect as a guest.
 
 ## Running the bot
 
-```
+```bash
 npm start
 ```
 
-You should see output like this:
-
-```
-  Showdown-TurBOOT v1.0.0
-  A Pokemon Showdown Battle/ChatBot
-
-[2026-07-08T16:15:16.090Z] Connecting to wss://sim3.psim.us/showdown/websocket...
-[2026-07-08T16:15:16.867Z] WebSocket connection established.
-[2026-07-08T16:15:16.868Z] Received challstr, authenticating...
-[2026-07-08T16:15:17.102Z] Successfully logged in as YourBotName
-[2026-07-08T16:15:17.103Z] Joining room: botdevelopment
-```
-
-Press Ctrl+C to stop the bot.
+To kill/stop the bot, press `Ctrl+C`.
 
 ## Configuration
 
@@ -78,22 +65,12 @@ All settings are controlled through the `.env` file. Here is the full list:
 | PS_RECONNECT_DELAY_MS | 10000 | Milliseconds to wait before reconnecting |
 | PS_COMMAND_CHAR | . | Prefix character for bot commands |
 
-## Project structure
-
-```
-src/
-  index.ts    - Entry point. Loads the .env file and starts the bot.
-  config.ts   - Reads environment variables into typed constants.
-  client.ts   - The WebSocket client that handles connecting, logging in,
-                parsing PS protocol messages, and auto-reconnecting.
-```
-
 ## Troubleshooting
 
 **The bot connects but stays as a guest**
 Make sure `PS_USERNAME` and `PS_PASSWORD` are set correctly in your `.env` file. The account must be registered on Pokemon Showdown.
 
-**Connection keeps dropping**
+**If Connection keeps dropping**
 This is usually a network issue. The bot will automatically try to reconnect after the delay set in `PS_RECONNECT_DELAY_MS` (default 10 seconds).
 
 **Login assertion error**
@@ -101,4 +78,4 @@ This means the Pokemon Showdown login server rejected your credentials. Double-c
 
 ## License
 
-MIT
+[MIT](LICENSE)
