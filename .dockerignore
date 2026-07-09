@@ -1,0 +1,35 @@
+# Dependencies and build artifacts (reinstalled/rebuilt inside container)
+node_modules/
+dist/
+
+# Version control
+.git/
+.gitignore
+
+# Environment (secrets — pass via docker run -e or compose env_file)
+.env
+.env.*
+!.env.example
+
+# Documentation and metadata
+*.md
+LICENSE
+
+# IDE and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Docker files (no need to copy themselves into the build)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# CI/CD
+.github/
+
+# Verification script
+verify_docker.sh

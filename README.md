@@ -65,6 +65,68 @@ All settings are controlled through the `.env` file. Here is the full list:
 | PS_RECONNECT_DELAY_MS | 10000 | Milliseconds to wait before reconnecting |
 | PS_COMMAND_CHAR | . | Prefix character for bot commands |
 
+## Docker
+
+### Build and run with Docker
+
+Build the image:
+
+```bash
+docker build -t showdown-turboot .
+```
+
+Run the bot, passing your configuration as environment variables:
+
+```bash
+docker run -d --name showdown-turboot \
+  -e PS_USERNAME=YourBotName \
+  -e PS_PASSWORD=YourBotPassword \
+  -e PS_ROOMS=botdevelopment \
+  showdown-turboot
+```
+
+Or mount your `.env` file:
+
+```bash
+docker run -d --name showdown-turboot --env-file .env showdown-turboot
+```
+
+### Build and run with Docker Compose
+
+1. Make sure your `.env` file is configured (see [Setup](#setup) above).
+
+2. Start the bot:
+
+```bash
+docker compose up -d --build
+```
+
+3. View logs:
+
+```bash
+docker compose logs -f
+```
+
+4. Stop the bot:
+
+```bash
+docker compose down
+```
+
+### CI/CD
+
+A GitHub Actions workflow automatically builds and pushes the Docker image to GitHub Container Registry (`ghcr.io`) on:
+- Pushes to `main`
+- Version tags (e.g., `v1.0.0`)
+
+Pull requests trigger a build-only step (no push) for validation.
+
+To pull the published image:
+
+```bash
+docker pull ghcr.io/turborx/showdown-turboot:main
+```
+
 ## Troubleshooting
 
 **The bot connects but stays as a guest**
@@ -79,3 +141,4 @@ This means the Pokemon Showdown login server rejected your credentials. Double-c
 ## License
 
 [MIT](LICENSE)
+
