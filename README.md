@@ -9,7 +9,6 @@ A bot for Pokemon Showdown that connects over WebSocket, logs into your account,
 - Automatically joins rooms you specify
 - Logs chat messages, PMs, room joins/leaves, and server popups to the console
 - Reconnects on its own if the connection drops
-- Shuts down cleanly when you press Ctrl+C
 
 ## Requirements
 
