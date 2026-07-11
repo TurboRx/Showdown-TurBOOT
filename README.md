@@ -112,15 +112,7 @@ docker compose logs -f
 docker compose down
 ```
 
-### CI/CD
-
-A GitHub Actions workflow automatically builds and pushes the Docker image to GitHub Container Registry (`ghcr.io`) on:
-- Pushes to `main`
-- Version tags (e.g., `v1.0.0`)
-
-Pull requests trigger a build-only step (no push) for validation.
-
-To pull the published image:
+5. To pull the published image:
 
 ```bash
 docker pull ghcr.io/turborx/showdown-turboot:main
