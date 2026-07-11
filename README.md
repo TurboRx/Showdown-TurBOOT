@@ -13,7 +13,7 @@ A bot for Pokemon Showdown that connects over WebSocket, logs into your account,
 ## Requirements
 
 - Node.js 20 or newer
-- A Pokemon Showdown account (optional — the bot works as a guest without one)
+- A Pokemon Showdown account (optional — the bot connects as a guest without one)
 
 ## Setup
 
@@ -47,7 +47,7 @@ If you leave the username blank, the bot will connect as a guest.
 npm start
 ```
 
-To kill/stop the bot, press `Ctrl+C`.
+To kill/stop the bot, press `Ctrl+C` or kill the process by other way.
 
 ## Configuration
 
